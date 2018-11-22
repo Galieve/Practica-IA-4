@@ -15,8 +15,9 @@ public class AlgoritmoGeneticoExtendido<A> extends GeneticAlgorithm<A> {
 	
 	
 
-	public AlgoritmoGeneticoExtendido(int individualLength, Collection<A> alfabetoNumeros, Collection<A> alfabetoOperadores, double mutationProbability,
-			Random random) {
+	public AlgoritmoGeneticoExtendido(int individualLength, 
+			Collection<A> alfabetoNumeros, Collection<A> alfabetoOperadores,
+			double mutationProbability, Random random) {
 		super(individualLength, alfabetoNumeros, mutationProbability, random);
 		
 		this.alfabetoOperadores = new ArrayList<>(alfabetoOperadores);
@@ -74,7 +75,7 @@ public class AlgoritmoGeneticoExtendido<A> extends GeneticAlgorithm<A> {
 		super.validatePopulation(arg0);
 	}
 
-	
+	public static 
 
 	
 	

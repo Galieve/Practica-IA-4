@@ -2,12 +2,9 @@ package juego;
 
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
 import aima.core.search.local.FitnessFunction;
 import aima.core.search.local.Individual;
-import javafx.util.Pair;
 
 public class FitnessExtendida implements FitnessFunction<Integer> {
 	
@@ -18,12 +15,15 @@ public class FitnessExtendida implements FitnessFunction<Integer> {
 	protected Integer objetivo;
 	
 	
-	public FitnessExtendida(List<Integer> alfabetoOperadores, List<Integer> alfabetoNumeros) {
+	
+
+
+	public FitnessExtendida(List<Integer> alfabetoOperadores, List<Integer> alfabetoNumeros, Integer objetivo) {
 		super();
 		this.alfabetoOperadores = alfabetoOperadores;
 		this.alfabetoNumeros = alfabetoNumeros;
+		this.objetivo = objetivo;
 	}
-
 
 	private BiFunction<Integer, Integer,  Integer> parser(Integer op){
 		switch(op) {
@@ -43,7 +43,7 @@ public class FitnessExtendida implements FitnessFunction<Integer> {
 		for(int i=1;i<datos.size(); i = i+2) {
 			provisional = parser(datos.get(i)).apply(provisional, datos.get(i+1));
 		}
-		if(provisional == objetivo) return Double.POSITIVE_INFINITY;
+		if(provisional == objetivo) return Integer.MAX_VALUE;
 		return 1 / (double) Math.abs(provisional-objetivo);
 		
 	}
