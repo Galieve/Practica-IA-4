@@ -33,7 +33,7 @@ public class Demo {
 	
 	private static final int TAM_INDIVIDUO = 2*NUM_OPERADORES+1;
 	
-	private static final int mutationProbability
+	private static final int mutationProbability;
 	
 	public static void main(String[] args) {
 
