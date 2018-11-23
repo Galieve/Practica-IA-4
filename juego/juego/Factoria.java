@@ -11,8 +11,8 @@ import aima.core.search.local.Individual;
 public class Factoria {
 
 	public static FitnessFunction<Integer> 
-	getFitnessFunction(List<Integer> alfabetoOperadores, 
-			List<Integer> alfabetoNumeros, Integer objetivo) {
+	getFitnessFunction(List<Integer> alfabetoNumeros, 
+			List<Integer> alfabetoOperadores, Integer objetivo) {
 		return new FitnessExtendida(alfabetoOperadores,alfabetoNumeros,objetivo);
 	}
 
@@ -38,7 +38,7 @@ public class Factoria {
 				add(operadores.get(new Random().nextInt(operadores.size())));
 			}
 		}
-		return new Individual<>(individualRepresentation);
+		return new Individual<Integer>(individualRepresentation);
 	}
 
 }
