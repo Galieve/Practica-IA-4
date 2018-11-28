@@ -63,14 +63,14 @@ public class AlgoritmoGeneticoExtendido<A> extends GeneticAlgorithm<A> {
 					Individual<A> z = hijoUnico(p.getKey(),p.getValue());
 					destructivo(l,z);
 					return null;
-				},1);
+				});
 			}
 			else {
 				return generateComun(population, fitnessFn,(l, p)->{
 					Individual<A> z = hijoUnico(p.getKey(),p.getValue());
 					noDestructivo(l,fitnessFn,p.getKey(), p.getValue(), z);
 					return null;
-				},1);
+				});
 			}
 		}
 		else {
@@ -81,7 +81,7 @@ public class AlgoritmoGeneticoExtendido<A> extends GeneticAlgorithm<A> {
 					destructivo(l,z.getKey());
 					destructivo(l,z.getValue());
 					return null;
-				},2);
+				});
 			}
 			else {
 				return generateComun(population, fitnessFn,(l, p)->{
@@ -90,7 +90,7 @@ public class AlgoritmoGeneticoExtendido<A> extends GeneticAlgorithm<A> {
 					noDestructivo(l,fitnessFn,p.getKey(), p.getValue(),
 							z.getKey(),z.getValue());
 					return null;
-				},2);
+				});
 			}
 		}
 		//return generateComun(population, fitnessFn);
@@ -99,11 +99,11 @@ public class AlgoritmoGeneticoExtendido<A> extends GeneticAlgorithm<A> {
 
 	private List<Individual<A>> generateComun
 	(List<Individual<A>> population, FitnessFunction<A> fitnessFn, 
-			BiFunction<List<Individual<A>>,Pair<Individual<A>, Individual<A>>,Void> funcion,
-			int ctrl){
+			BiFunction<List<Individual<A>>,
+			Pair<Individual<A>, Individual<A>>,Void> funcion){
 		List<Individual<A>> newPopulation = new ArrayList<Individual<A>>(population.size());
 		// for i = 1 to SIZE(population) do
-		for (int i = 0; i < population.size()/ctrl; i++) {
+		while(newPopulation.size()< population.size()) {
 			// x <- RANDOM-SELECTION(population, FITNESS-FN)
 			Individual<A> x = randomSelection(population, fitnessFn);
 			// y <- RANDOM-SELECTION(population, FITNESS-FN)
@@ -122,6 +122,7 @@ public class AlgoritmoGeneticoExtendido<A> extends GeneticAlgorithm<A> {
 			
 
 		}
+		//while(newPopulation.size()< population.size());
 		return newPopulation;
 	}
 

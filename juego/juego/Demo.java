@@ -82,7 +82,7 @@ public class Demo {
 
 			// Run till goal is achieved
 			bestIndividual = new IndividuoExtendido
-					( ga.geneticAlgorithm(population, fitnessFunction, goalTest, 0L));
+					( ga.geneticAlgorithm(population, fitnessFunction, goalTest, 15000L));
 
 			System.out.println("");
 			System.out.println("Goal Test Best Individual= "+bestIndividual+"\n" );

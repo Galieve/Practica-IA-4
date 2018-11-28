@@ -47,7 +47,7 @@ public class FitnessExtendida implements FitnessFunction<Integer> {
 		}catch(Exception e) {
 			provisional = 0;
 		}
-		if(provisional == objetivo) return Integer.MAX_VALUE;
+		if(provisional == objetivo) return Double.POSITIVE_INFINITY;
 		return 1 / (double) Math.abs(provisional-objetivo);
 
 	}
