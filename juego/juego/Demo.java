@@ -42,14 +42,20 @@ public class Demo {
 	private static final double CRUCE_PROB_ITERATE=0.0;
 
 	private static final Integer objetivo = new Random().nextInt(MAX_NUMERO);
+	
+	public static final boolean unique = true;
+	
+	public static final boolean destructive = true;
+	
+	private static final long TIME[]= {1000L, 5000L};
 
 	public static void main(String[] args) {
 		algoritmoGeneticoDemo();
-		
-		
+
+
 		algoritmoGeneticoIterar();
-		
-		
+
+
 	}
 
 	private static void algoritmoGeneticoDemo() {
@@ -66,39 +72,45 @@ public class Demo {
 		ga.setProbMutacion(MUTATION_PROB_ITERATE+incr_prob);
 	}
 
-	private static void update(AlgoritmoGeneticoExtendido ga, double incr_prob, double incr_cruce) {
+	private static void update(AlgoritmoGeneticoExtendido ga, 
+			double incr_prob, double incr_cruce) {
 		update(ga, incr_prob, incr_cruce, ga.isHijoUnico(), ga.isDestructive());
 	}
 
 
 	private static void algoritmoGeneticoIterar() {
-		
+
 		AlgoritmoGeneticoExtendido ga = new AlgoritmoGeneticoExtendido
 				(TAM_INDIVIDUO, alfabetoNum,alfabetoOp);
+		update(ga,0,0,unique, destructive);
 		for(int i=0; i<10; ++i) {
 			for(int j=0; j<10;++j) {
-				
-				File file = new File("Resultado "+i +"-"+j+".out");
-				FileOutputStream fos=null;
-				try {
-					fos = new FileOutputStream(file);
-					PrintStream ps = new PrintStream(fos);
-					System.setOut(ps);
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				for(int t=0; t < 2; ++t) {
+					File file = new File("resultados/Resultado (unico ="+unique
+							+", destructivo = "+destructive +", prob ="+i 
+							+", cruce ="+j+", mode ="+t+") .out");
+					FileOutputStream fos=null;
+					try {
+						fos = new FileOutputStream(file);
+						PrintStream ps = new PrintStream(fos);
+						System.setOut(ps);
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					update(ga,i*VAR_PROB,j*VAR_PROB);				
+					for(int ctrl=0;ctrl<10;ctrl++) {
+						printIterate(generarPoblacion(), ga, TIME[t]);
+					}
+
+					try {
+						fos.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-				update(ga,i*VAR_PROB,j*VAR_PROB,true, true);				
-				for(int ctrl=0;ctrl<10;ctrl++) {
-					printIterate(generarPoblacion(), ga, 0L);
-				}
-				
-				try {
-					fos.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+
 			}
 
 		}
@@ -137,8 +149,8 @@ public class Demo {
 		System.out.println("Iterations       = " + ga.getIterations());
 		System.out.println("Took            = " + ga.getTimeInMilliseconds() + "ms.");
 	}
-	
-	
+
+
 	private static void printIterate(Set<Individual<Integer>> population, 
 			AlgoritmoGeneticoExtendido ga, long t) {
 		FitnessFunction<Integer> fitnessFunction = Factoria.getFitnessFunction
@@ -149,13 +161,13 @@ public class Demo {
 		IndividuoExtendido bestIndividual = (IndividuoExtendido) 
 				ga.geneticAlgorithm(population, fitnessFunction, goalTest, t);
 
-		
+
 		System.out.print(fitnessFunction.apply(bestIndividual)+"\t");
 		System.out.print(goalTest.test(bestIndividual)+"\t");
 		System.out.print(ga.getIterations()+"\t");
 		System.out.print(ga.getTimeInMilliseconds() + "\n");
 	}
-	
+
 	private static Set<Individual<Integer>> generarPoblacion(){
 		Set<Individual<Integer>> population = new HashSet<>();
 		for (int i = 0; i < TAM_POBLACION; i++) {
@@ -168,8 +180,8 @@ public class Demo {
 	private static void algoritmoGenetico() {
 		System.out.println("\nPráctica 4 - GeneticAlgorithm  -->");
 		try {
-			
-			
+
+
 			// Generate an initial population
 			Set<Individual<Integer>> population = generarPoblacion();
 			AlgoritmoGeneticoExtendido ga = new AlgoritmoGeneticoExtendido
@@ -187,7 +199,7 @@ public class Demo {
 			e.printStackTrace();
 		}
 	}
-	
+
 
 
 }
