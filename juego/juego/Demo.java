@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Set;
 import aima.core.search.framework.problem.GoalTest;
 import aima.core.search.local.FitnessFunction;
 import aima.core.search.local.Individual;
+import javafx.util.Pair;
 
 public class Demo {
 
@@ -42,26 +44,26 @@ public class Demo {
 	private static final double CRUCE_PROB_ITERATE=0.0;
 
 	private static final Integer objetivo = new Random().nextInt(MAX_NUMERO);
-	
-	public static final boolean unique = true;
-	
-	public static final boolean destructive = true;
-	
+
+	private static final List<Pair<Boolean, Boolean>> decision = new ArrayList<>();
 	private static final long TIME[]= {1000L, 5000L};
 
 	public static void main(String[] args) {
-		algoritmoGeneticoDemo();
-
-
+		init();
+		algoritmoGenetico();
 		algoritmoGeneticoIterar();
 
 
 	}
 
-	private static void algoritmoGeneticoDemo() {
 
 
-		algoritmoGenetico();
+	private static void init() {
+
+		decision.add(new Pair<Boolean, Boolean>(true, true));
+		decision.add(new Pair<Boolean, Boolean>(true, false));
+		decision.add(new Pair<Boolean, Boolean>(false, true));
+		decision.add(new Pair<Boolean, Boolean>(false, false));
 	}
 
 	private static void update(AlgoritmoGeneticoExtendido ga, double incr_prob, double incr_cruce,
@@ -82,38 +84,44 @@ public class Demo {
 
 		AlgoritmoGeneticoExtendido ga = new AlgoritmoGeneticoExtendido
 				(TAM_INDIVIDUO, alfabetoNum,alfabetoOp);
-		update(ga,0,0,unique, destructive);
-		for(int i=0; i<10; ++i) {
-			for(int j=0; j<10;++j) {
-				for(int t=0; t < 2; ++t) {
-					File file = new File("resultados/Resultado (unico ="+unique
-							+", destructivo = "+destructive +", prob ="+i 
-							+", cruce ="+j+", mode ="+t+") .out");
-					FileOutputStream fos=null;
-					try {
-						fos = new FileOutputStream(file);
-						PrintStream ps = new PrintStream(fos);
-						System.setOut(ps);
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					update(ga,i*VAR_PROB,j*VAR_PROB);				
-					for(int ctrl=0;ctrl<10;ctrl++) {
-						printIterate(generarPoblacion(), ga, TIME[t]);
+		
+		for(int k = 0; k < decision.size(); ++k) {
+			update(ga,0,0,decision.get(k).getKey(), decision.get(k).getValue());
+			for(int i=0; i<10; ++i) {
+				for(int j=0; j<10;++j) {
+					for(int t=0; t < 2; ++t) {
+						File file = new File("resultados/Resultado (unico ="
+								+decision.get(k).getKey()+", destructivo = "
+								+decision.get(k).getKey() +", prob ="+i 
+								+", cruce ="+j+", mode ="+t+", objetivo ="
+								+objetivo+") .out");
+						FileOutputStream fos=null;
+						try {
+							fos = new FileOutputStream(file);
+							PrintStream ps = new PrintStream(fos);
+							System.setOut(ps);
+						} catch (FileNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						update(ga,i*VAR_PROB,j*VAR_PROB);				
+						for(int ctrl=0;ctrl<10;ctrl++) {
+							printIterate(generarPoblacion(), ga, TIME[t]);
+						}
+
+						try {
+							fos.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 
-					try {
-						fos.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 				}
 
 			}
-
 		}
+
 
 
 	}
