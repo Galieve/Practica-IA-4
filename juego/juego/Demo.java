@@ -92,7 +92,7 @@ public class Demo {
 					for(int t=0; t < 2; ++t) {
 						File file = new File("resultados/Resultado (unico ="
 								+decision.get(k).getKey()+", destructivo = "
-								+decision.get(k).getKey() +", prob ="+i 
+								+decision.get(k).getValue() +", prob ="+i 
 								+", cruce ="+j+", mode ="+t+", objetivo ="
 								+objetivo+") .out");
 						FileOutputStream fos=null;
