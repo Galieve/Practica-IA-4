@@ -25,6 +25,7 @@ public class Factoria {
 		return new TestObjetivo(new FitnessExtendida(alfabetoOperadores,alfabetoNumeros,objetivo));
 	}
 
+	
 
 	public static Individual<Integer> generateRandomIndividual(
 			List<Integer> numeros, List<Integer> operadores, int tam) {
@@ -38,7 +39,7 @@ public class Factoria {
 				add(operadores.get(new Random().nextInt(operadores.size())));
 			}
 		}
-		return new Individual<Integer>(individualRepresentation);
+		return new IndividuoExtendido(individualRepresentation);
 	}
 
 }

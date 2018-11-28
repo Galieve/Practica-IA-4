@@ -1,16 +1,18 @@
 package juego;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 
-import aima.core.agent.Action;
 import aima.core.search.framework.problem.GoalTest;
 import aima.core.search.local.FitnessFunction;
-import aima.core.search.local.GeneticAlgorithm;
 import aima.core.search.local.Individual;
 
 public class Demo {
@@ -20,99 +22,172 @@ public class Demo {
 
 	private static final List<Integer> alfabetoOp = 
 			Arrays.asList(0,1,2,3);
-	
-	private static final int TAM_POBLACION=12;
-	
-	private static final int NUM_OPERADORES=5;
-	
-	private static final Integer MAX_NUMERO=1000;
-	
-	private static final int TAM_INDIVIDUO = 2*NUM_OPERADORES+1;
-	
-	private static final double MUTATION_PROB=0.7;
-	
-	private static final double CRUCE_PROB=0.8;
-	
-	private static final Integer objetivo = new Random().nextInt(MAX_NUMERO);
-	
-	public static void main(String[] args) {
 
+	private static final double VAR_PROB=0.1;
+
+	private static final int TAM_POBLACION=4;
+
+	private static final int NUM_OPERADORES=5;
+
+	private static final Integer MAX_NUMERO=1000;
+
+	private static final int TAM_INDIVIDUO = 2*NUM_OPERADORES+1;
+
+	private static final double MUTATION_PROB=0.75;
+
+	private static final double CRUCE_PROB=0.8;
+
+	private static final double MUTATION_PROB_ITERATE=0.0;
+
+	private static final double CRUCE_PROB_ITERATE=0.0;
+
+	private static final Integer objetivo = new Random().nextInt(MAX_NUMERO);
+
+	public static void main(String[] args) {
 		algoritmoGeneticoDemo();
+		
+		
+		algoritmoGeneticoIterar();
+		
+		
 	}
 
 	private static void algoritmoGeneticoDemo() {
 
-	
+
 		algoritmoGenetico();
 	}
-	
-	private static void algoritmoGenetico() {
-		System.out.println("\nNQueensDemo GeneticAlgorithm  -->");
-		try {
-			FitnessFunction<Integer> fitnessFunction = Factoria.getFitnessFunction
-					(alfabetoNum, alfabetoOp, objetivo);
-			GoalTest<Individual<Integer>> goalTest =
-					Factoria.getGoalTest((FitnessExtendida) fitnessFunction);
-			// Generate an initial population
-			Set<Individual<Integer>> population = new HashSet<>();
-			for (int i = 0; i < TAM_POBLACION; i++) {
-				population.add(Factoria.generateRandomIndividual
-						(alfabetoNum, alfabetoOp, TAM_INDIVIDUO));
+
+	private static void update(AlgoritmoGeneticoExtendido ga, double incr_prob, double incr_cruce,
+			boolean unique, boolean destructive) {
+		ga.setProbCruce(CRUCE_PROB_ITERATE+incr_cruce);
+		ga.setHijoUnico(unique);
+		ga.setDestructive(destructive);
+		ga.setProbMutacion(MUTATION_PROB_ITERATE+incr_prob);
+	}
+
+	private static void update(AlgoritmoGeneticoExtendido ga, double incr_prob, double incr_cruce) {
+		update(ga, incr_prob, incr_cruce, ga.isHijoUnico(), ga.isDestructive());
+	}
+
+
+	private static void algoritmoGeneticoIterar() {
+		
+		AlgoritmoGeneticoExtendido ga = new AlgoritmoGeneticoExtendido
+				(TAM_INDIVIDUO, alfabetoNum,alfabetoOp);
+		for(int i=0; i<10; ++i) {
+			for(int j=0; j<10;++j) {
+				
+				File file = new File("Resultado "+i +"-"+j+".out");
+				FileOutputStream fos=null;
+				try {
+					fos = new FileOutputStream(file);
+					PrintStream ps = new PrintStream(fos);
+					System.setOut(ps);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				update(ga,i*VAR_PROB,j*VAR_PROB,true, true);				
+				for(int ctrl=0;ctrl<10;ctrl++) {
+					printIterate(generarPoblacion(), ga, 0L);
+				}
+				
+				try {
+					fos.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
-			AlgoritmoGeneticoExtendido<Integer> ga = new AlgoritmoGeneticoExtendido
-					<>(TAM_INDIVIDUO, alfabetoNum,alfabetoOp,
-							 MUTATION_PROB);
+		}
+
+
+	}
+
+	private static void print(Set<Individual<Integer>> population, AlgoritmoGeneticoExtendido ga) {
+		FitnessFunction<Integer> fitnessFunction = Factoria.getFitnessFunction
+				(alfabetoNum, alfabetoOp, objetivo);
+		GoalTest<Individual<Integer>> goalTest =
+				Factoria.getGoalTest((FitnessExtendida) fitnessFunction);
+		// Run for a set amount of time
+		IndividuoExtendido bestIndividual = (IndividuoExtendido) 
+				ga.geneticAlgorithm(population, fitnessFunction, goalTest, 1000L);
+
+		System.out.println("Objective		= "+objetivo);
+		System.out.println("Max Time (1 second) Best Individual= "
+				+bestIndividual+" \n");
+		System.out.println("Fitness         = " + fitnessFunction.apply(bestIndividual));
+		System.out.println("Is Goal         = " + goalTest.test(bestIndividual));
+
+		System.out.println("Population Size = " + ga.getPopulationSize());
+		System.out.println("Iterations      = " + ga.getIterations());
+		System.out.println("Took            = " + ga.getTimeInMilliseconds() + "ms.");
+		System.out.println("\n-------------------------------\n");
+		// Run till goal is achieved
+		bestIndividual = (IndividuoExtendido) 
+				ga.geneticAlgorithm(population, fitnessFunction, goalTest, 5000L);
+
+		System.out.println("");
+		System.out.println("Goal Test Best Individual= "+bestIndividual+"\n" );
+		System.out.println("Fitness         = " + fitnessFunction.apply(bestIndividual));
+		System.out.println("Is Goal         = " + goalTest.test(bestIndividual));
+		System.out.println("Population Size = " + ga.getPopulationSize());
+		System.out.println("Iterations       = " + ga.getIterations());
+		System.out.println("Took            = " + ga.getTimeInMilliseconds() + "ms.");
+	}
+	
+	
+	private static void printIterate(Set<Individual<Integer>> population, 
+			AlgoritmoGeneticoExtendido ga, long t) {
+		FitnessFunction<Integer> fitnessFunction = Factoria.getFitnessFunction
+				(alfabetoNum, alfabetoOp, objetivo);
+		GoalTest<Individual<Integer>> goalTest =
+				Factoria.getGoalTest((FitnessExtendida) fitnessFunction);
+		// Run for a set amount of time
+		IndividuoExtendido bestIndividual = (IndividuoExtendido) 
+				ga.geneticAlgorithm(population, fitnessFunction, goalTest, t);
+
+		
+		System.out.print(fitnessFunction.apply(bestIndividual)+"\t");
+		System.out.print(goalTest.test(bestIndividual)+"\t");
+		System.out.print(ga.getIterations()+"\t");
+		System.out.print(ga.getTimeInMilliseconds() + "\n");
+	}
+	
+	private static Set<Individual<Integer>> generarPoblacion(){
+		Set<Individual<Integer>> population = new HashSet<>();
+		for (int i = 0; i < TAM_POBLACION; i++) {
+			population.add(Factoria.generateRandomIndividual
+					(alfabetoNum, alfabetoOp, TAM_INDIVIDUO));
+		}
+		return population;
+	}
+
+	private static void algoritmoGenetico() {
+		System.out.println("\nPráctica 4 - GeneticAlgorithm  -->");
+		try {
+			
+			
+			// Generate an initial population
+			Set<Individual<Integer>> population = generarPoblacion();
+			AlgoritmoGeneticoExtendido ga = new AlgoritmoGeneticoExtendido
+					(TAM_INDIVIDUO, alfabetoNum,alfabetoOp);
 			ga.setProbCruce(CRUCE_PROB);
 			ga.setHijoUnico(false);
-			ga.setDestructive(true);
-			// Run for a set amount of time
-			IndividuoExtendido bestIndividual = new IndividuoExtendido
-					( ga.geneticAlgorithm(population, fitnessFunction, goalTest, 1000L));
-			
-			System.out.println("Objective		= "+objetivo);
-			System.out.println("Max Time (1 second) Best Individual= "
-			+bestIndividual+" \n");
-			System.out.println("Fitness         = " + fitnessFunction.apply(bestIndividual));
-			System.out.println("Is Goal         = " + goalTest.test(bestIndividual));
-		
-			System.out.println("Population Size = " + ga.getPopulationSize());
-			System.out.println("Iterations      = " + ga.getIterations());
-			System.out.println("Took            = " + ga.getTimeInMilliseconds() + "ms.");
+			ga.setDestructive(false);
+			ga.setProbMutacion(MUTATION_PROB);
+			print(population, ga);
 
-			// Run till goal is achieved
-			bestIndividual = new IndividuoExtendido
-					( ga.geneticAlgorithm(population, fitnessFunction, goalTest, 15000L));
 
-			System.out.println("");
-			System.out.println("Goal Test Best Individual= "+bestIndividual+"\n" );
-			System.out.println("Fitness         = " + fitnessFunction.apply(bestIndividual));
-			System.out.println("Is Goal         = " + goalTest.test(bestIndividual));
-			System.out.println("Population Size = " + ga.getPopulationSize());
-			System.out.println("Itertions       = " + ga.getIterations());
-			System.out.println("Took            = " + ga.getTimeInMilliseconds() + "ms.");
 
-			
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
-	private static void printInstrumentation(Properties properties) {
-		for (Object o : properties.keySet()) {
-			String key = (String) o;
-			String property = properties.getProperty(key);
-			System.out.println(key + " : " + property);
-		}
-
-	}
-
-	private static void printActions(List<Action> actions) {
-		for (Action action : actions) {
-			System.out.println(action.toString());
-		}
-	}
 	
-	
+
+
 }

@@ -1,7 +1,6 @@
 package juego;
 
 import java.util.List;
-import java.util.function.BiFunction;
 
 import aima.core.search.local.Individual;
 
@@ -25,17 +24,6 @@ public class IndividuoExtendido extends Individual<Integer> {
 		}
 	}
 	
-	private BiFunction<Integer, Integer,  Integer> parser(Integer op){
-		switch(op) {
-		case 0: return (x,y)->x+y;
-		case 1: return (x,y)->x-y;
-		case 2: return (x,y)->x*y;
-		case 3: return (x,y)->x/y;
-		default: return null;
-		}
-
-	}
-	
 	
 	@Override
 	public String toString() {
@@ -47,7 +35,7 @@ public class IndividuoExtendido extends Individual<Integer> {
 			sb.append(conversorOp(this.getRepresentation().get(i)));
 			sb.append(" ");
 			sb.append(this.getRepresentation().get(i+1));
-			resultadoActual=parser(this.getRepresentation().get(i)).
+			resultadoActual=FitnessExtendida.parser(this.getRepresentation().get(i)).
 					apply(resultadoActual, this.getRepresentation().get(i+1));
 		}
 		sb.append(" = "+resultadoActual);

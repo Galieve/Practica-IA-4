@@ -25,7 +25,7 @@ public class FitnessExtendida implements FitnessFunction<Integer> {
 		this.objetivo = objetivo;
 	}
 
-	private BiFunction<Integer, Integer,  Integer> parser(Integer op){
+	public static BiFunction<Integer, Integer,  Integer> parser(Integer op){
 		switch(op) {
 		case 0: return (x,y)->x+y;
 		case 1: return (x,y)->x-y;
@@ -33,7 +33,6 @@ public class FitnessExtendida implements FitnessFunction<Integer> {
 		case 3: return (x,y)->x/y;
 		default: return null;
 		}
-
 	}
 
 	@Override
@@ -44,8 +43,11 @@ public class FitnessExtendida implements FitnessFunction<Integer> {
 			for(int i=1;i<datos.size(); i = i+2) {
 				provisional = parser(datos.get(i)).apply(provisional, datos.get(i+1));
 			}
-		}catch(Exception e) {
-			provisional = 0;
+			//Con el alfabeto de prueba, no debería pasar nada.
+		}catch(ArithmeticException e) {
+			//Si se llega aquí, se ha dividido entre 0, por lo que d(x,objetivo)=inf
+			//Por lo que f(x) = 0.
+			return 0;
 		}
 		if(provisional == objetivo) return Double.POSITIVE_INFINITY;
 		return 1 / (double) Math.abs(provisional-objetivo);
