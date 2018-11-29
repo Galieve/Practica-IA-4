@@ -90,7 +90,7 @@ public class Demo {
 			for(int i=0; i<10; ++i) {
 				for(int j=0; j<10;++j) {
 					for(int t=0; t < 2; ++t) {
-						File file = new File("resultados/Resultado (unico ="
+						File file = new File("resultados "+k+"/Resultado (unico ="
 								+decision.get(k).getKey()+", destructivo = "
 								+decision.get(k).getValue() +", prob ="+i 
 								+", cruce ="+j+", mode ="+t+", objetivo ="
