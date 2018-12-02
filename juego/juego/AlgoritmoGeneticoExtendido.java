@@ -53,7 +53,11 @@ public class AlgoritmoGeneticoExtendido extends GeneticAlgorithm<Integer> {
 		return new IndividuoExtendido(mutatedRepresentation);
 	}
 
-
+	/*
+	 * En esta función, en función de los valores de configuración (hijoUnico, destructivo),
+	 * se llama a la función generateComun, ejecutandose en cada caso el protocolo adecuado
+	 * mediante una lambda abstracción.
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	protected List<Individual<Integer>> nextGeneration
